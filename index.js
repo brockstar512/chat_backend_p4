@@ -1,20 +1,17 @@
 const express =require('express')
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 5000
 const parser = require('body-parser')
 const cors = require('cors')
 const app = express()
+const socketio = require('socket.io')
+const http = require('http')
 
+const server = http.createServer(app)
+const io = socketio(server)
 
-//const  routes
+const router = require('./routes/router')
 
-app.use(parser.json())
-app.use(cors())
+app.use(router)
 
-
-
-app.get('/', (req, res)=>{
-    res.send("index working")
-})
-
-
-app.listen(PORT, () => console.log('workit coder!', PORT))
+server.listen(PORT, ()=> console.log(`Server has started on poer ${PORT}, work it coder`))
+//localhost 5000
