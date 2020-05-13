@@ -1,13 +1,16 @@
 const express =require('express')
-const PORT = process.env.PORT || 5000
 const parser = require('body-parser')
 const cors = require('cors')
-const app = express()
 const socketio = require('socket.io')
 const http = require('http')
+const { addUser, removeUser, getUser, gertUsersInRoom} =require('./controllers/usersControllers')
 
+const PORT = process.env.PORT || 5000
+const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
+
+
 
 io.on('connection', (socket)=>{
     console.log('we have a new connect from socket')
