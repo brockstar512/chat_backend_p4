@@ -68,7 +68,7 @@ io.on('connection', (socket)=>{
         const user = getUser(socket.id)
         //accessing the room the user is in
         io.to(user.room).emit('message', { user: user.name, text: message });
-        io.to(user.room).emit('roomData', { room: user.room, users:getUsersInRoom(user.room)});
+        // io.to(user.room).emit('roomData', { room: user.room, users:getUsersInRoom(user.room)});
         
         callback()
     })
@@ -84,6 +84,7 @@ io.on('connection', (socket)=>{
         //otherwise when you disconnect it would not remove user from array
         if(user){
             io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
+            io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
             
         }
     })
