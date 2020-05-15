@@ -1,4 +1,4 @@
-const users = []
+let users = []
 
 const addUser = ({id, name, room}) =>{
     //room changes with what room the user goes into
