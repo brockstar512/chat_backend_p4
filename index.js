@@ -14,6 +14,7 @@ const io = socketio(server)
 const router = require('./routes/router')
 
 app.use(router)
+app.use(cors())
 
 
 
@@ -49,6 +50,11 @@ io.on('connection', (socket)=>{
     //socket.broadcast sends a message tp everyone in the room, except for that user
     socket.join(user.room)
     //this joins the input user into a room
+
+    io.to(user.room).emit('roomData',{room: user.room, users: getUsersInRoom(user.room)})
+    //sending data to all users. this is emitting on the key word  roomData
+    //the room the user is in and the function that brings in all users in the room with the argument of
+    //the users in that specific room
     callback();
     })
 
@@ -58,11 +64,13 @@ io.on('connection', (socket)=>{
     //this is going to wait on the front end to emit a message ot the backend
     //** THE ON FUNCTION TAKES IN TWO PARAMETERS> 1. keyword 2. arrow function
     //the function is going to run after something is emitted
-    socket.on('sendMessage', (message, callback) => {
+    socket.on('sendMessage', (message, callback) =>{
                             //message coming from the front end
         const user = getUser(socket.id)
         //accessing the room the user is in
-        io.to(user.room).emit('message', {user: user.name, text: message})
+        io.to(user.room).emit('message', { user: user.name, text: message });
+        // io.to(user.room).emit('roomData', { room: user.room, users:getUsersInRoom(user.room)});
+        
         callback()
     })
 
@@ -71,6 +79,15 @@ io.on('connection', (socket)=>{
     //from the front end now that they're already connected
     socket.on('disconnect', ()=>{
         console.log('user has left!')
+        const user = removeUser(socket.id)
+
+        //below we send a meesage to the socket room that the room was in
+        //otherwise when you disconnect it would not remove user from array
+        if(user){
+            io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
+            io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+            
+        }
     })
 
 })
