@@ -16,7 +16,7 @@ const router = require('./routes/router')
 app.use(router)
 app.use(cors())
 
-
+console.log('added change so i can push')
 
 io.on('connection', (socket)=>{
     console.log('we have a new connect from socket')
